@@ -5,7 +5,7 @@ from db import Model
 
 class Product(Model):
     __tablename__ = 'products'
-    
+
     id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str] = mapped_column(String(64))
     manufacturer: Mapped[str] = mapped_column(String(64))
@@ -14,5 +14,5 @@ class Product(Model):
     cpu: Mapped[str] = mapped_column(String(32))
 
 
-def __repr__(self):
-    return f'Product({self.id}, "{self.name}")'
+    def __repr__(self):
+        return f'Product({self.id}, "{self.name}")'
