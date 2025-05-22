@@ -1,8 +1,16 @@
 from typing import Optional
-from sqlalchemy import ForeignKey, String
+from colorama import Fore
+from sqlalchemy import ForeignKey, String, Table, Column
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from db import Model
 
+
+ProductCountry = Table(
+    'products_countries',
+    Model.metadata,
+    Column('product_id', ForeignKey('products.id'), primary_key=True, nullable=False),
+    Column('country_id', ForeignKey('countries.id'), primary_key=True, nullable=False),
+)
 
 class Product(Model):
     __tablename__ = 'products'
@@ -13,14 +21,25 @@ class Product(Model):
         ForeignKey('manufacturers.id'), index=True
     )
     year: Mapped[int] = mapped_column(index=True)
-    country: Mapped[Optional[str]] = mapped_column(String(32))
     cpu: Mapped[Optional[str]] = mapped_column(String(32))
 
     # A product has one manufacturer
     manufacturer: Mapped['Manufacturer'] = relationship(back_populates='products')
+    countries: Mapped[list['Country']] = relationship(secondary=ProductCountry, back_populates='products')
 
     def __repr__(self):
         return f'Product({self.id}, "{self.name}")'
+
+class Country(Model):
+    __tablename__ = "countries"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    name: Mapped[str] = mapped_column(String(32), index=True, unique=True)
+
+    products: Mapped[list['Product']] = relationship(secondary=ProductCountry, back_populates='countries')
+
+    def __repr__(self):
+        return f'Country({self.id}, "{self.name}")'
     
 class Manufacturer(Model):
     __tablename__ = "manufacturers"
@@ -33,3 +52,5 @@ class Manufacturer(Model):
     
     def __repr__(self):
         return f'Manufacturer({self.id}, "{self.name}")'
+
+
