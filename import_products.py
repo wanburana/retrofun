@@ -1,6 +1,7 @@
 import csv
 from db import Model, Session, engine
-from models import Country, Manufacturer, Product
+from models import Country, Manufacturer, Product, ProductCountry
+from sqlalchemy import delete
 
 
 def main():
@@ -9,6 +10,13 @@ def main():
 
     with Session() as session:
         with session.begin():
+            session.execute(delete(ProductCountry))
+            session.execute(delete(Product))
+            session.execute(delete(Manufacturer))
+            session.execute(delete(Country))
+
+    with Session() as session:
+        with session.begin():        
             with open("products.csv") as f:
                 reader = csv.DictReader(f)
                 all_manufacturers = {}
