@@ -5,8 +5,6 @@ from sqlalchemy import delete
 
 
 def main():
-    Model.metadata.drop_all(engine) # warning: this deletes all data!
-    Model.metadata.create_all(engine)
 
     with Session() as session:
         with session.begin():
